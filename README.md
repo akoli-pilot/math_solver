@@ -1,4 +1,4 @@
-# GTK3 Wolfram Math Solver (Model View Ccontrol + Factory Method)
+# GTK3 Wolfram Math Solver (Model View Control + Factory Method)
 
 Interactive desktop math solver built with Python + GTK3. Queries are sent to the Wolfram Alpha API and rendered as math element cards in a single main window.
 
