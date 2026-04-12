@@ -1,0 +1,276 @@
+@define-color md-primary #86d7c7;
+@define-color md-on-primary #003730;
+@define-color md-primary-container #1a4c43;
+@define-color md-surface #111514;
+@define-color md-surface-container #1b2220;
+@define-color md-surface-container-high #242d2a;
+@define-color md-outline #8c9892;
+@define-color md-on-surface #e2e7e3;
+@define-color md-secondary #b3ccc5;
+@define-color md-error #ffb4ab;
+@define-color md-error-container #8c1d18;
+
+* {
+  font-family: "Noto Sans", "Cantarell", sans-serif;
+}
+
+window.main-window {
+  background-color: @md-surface;
+  background-image: linear-gradient(160deg, #101715 0%, #13201d 42%, #0f1917 100%);
+}
+
+window.explanation-window {
+  background-color: @md-surface;
+  background-image: linear-gradient(140deg, #0e1413 0%, #172321 100%);
+}
+
+box.top-shell {
+  margin: 24px;
+}
+
+box.surface-panel {
+  background-color: alpha(@md-surface-container-high, 0.95);
+  border: 1px solid alpha(@md-outline, 0.34);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+label.headline {
+  color: @md-on-surface;
+  font-size: 31px;
+  font-weight: 700;
+}
+
+label.subtitle {
+  color: alpha(@md-on-surface, 0.8);
+  font-size: 14px;
+}
+
+entry.material-entry {
+  border-radius: 16px;
+  border: 1px solid alpha(@md-outline, 0.6);
+  padding: 12px;
+  font-size: 15px;
+  color: @md-on-surface;
+  background: alpha(@md-surface, 0.88);
+}
+
+box.equation-editor {
+  background: alpha(@md-surface, 0.2);
+  border-radius: 16px;
+  padding: 8px;
+}
+
+frame.equation-display-frame {
+  border: 1px solid alpha(@md-outline, 0.5);
+  border-radius: 10px;
+  background: alpha(@md-surface, 0.92);
+}
+
+box.equation-display-shell {
+  padding: 2px;
+}
+
+label.editor-hint {
+  color: alpha(@md-on-surface, 0.72);
+  font-size: 12px;
+}
+
+label.editor-preview-title {
+  color: alpha(@md-on-surface, 0.86);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+grid.keypad-grid {
+  margin-top: 6px;
+}
+
+scrolledwindow.equation-scroll {
+  border: 1px solid alpha(@md-outline, 0.5);
+  border-radius: 14px;
+  background: alpha(@md-surface, 0.92);
+}
+
+textview.equation-input,
+textview.equation-input text {
+  color: @md-on-surface;
+  background: transparent;
+}
+
+box.symbol-bar {
+  margin-top: 2px;
+}
+
+button.symbol-button {
+  background: alpha(@md-primary-container, 0.72);
+  color: @md-primary;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+button.symbol-button:hover {
+  background: alpha(@md-primary-container, 0.95);
+}
+
+button.keypad-button {
+  border-radius: 12px;
+  padding: 8px;
+  font-weight: 700;
+}
+
+button.keypad-number {
+  background: alpha(@md-surface-container-high, 0.88);
+  color: @md-on-surface;
+}
+
+button.keypad-meta {
+  background: alpha(@md-outline, 0.25);
+  color: @md-on-surface;
+}
+
+button.keypad-second {
+  background: #d1b35a;
+  color: #1f1a0e;
+}
+
+button.keypad-alpha {
+  background: #37a57e;
+  color: #061a12;
+}
+
+button.keypad-nav {
+  background: #6b87b8;
+  color: #eff5ff;
+}
+
+button.keypad-operator,
+button.keypad-function {
+  background: alpha(@md-primary-container, 0.72);
+  color: @md-primary;
+}
+
+button.keypad-special {
+  background: alpha(@md-secondary, 0.2);
+  color: @md-secondary;
+}
+
+button.keypad-action {
+  background: alpha(@md-secondary, 0.2);
+  color: @md-secondary;
+}
+
+button.keypad-submit {
+  background: @md-primary;
+  color: @md-on-primary;
+}
+
+button.keypad-button:hover {
+  background: shade(@md-primary-container, 1.08);
+}
+
+entry.material-entry:focus {
+  border: 2px solid @md-primary;
+}
+
+button.filled-button {
+  background: @md-primary;
+  color: @md-on-primary;
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-weight: 700;
+}
+
+button.filled-button:hover {
+  background: shade(@md-primary, 0.92);
+}
+
+button.tonal-button {
+  background: @md-primary-container;
+  color: @md-primary;
+  border-radius: 14px;
+  padding: 8px 14px;
+  font-weight: 700;
+}
+
+label.status-chip {
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+label.status-info {
+  background: alpha(@md-secondary, 0.22);
+  color: @md-secondary;
+}
+
+label.status-success {
+  background: alpha(@md-primary, 0.22);
+  color: @md-primary;
+}
+
+label.status-error {
+  background: alpha(@md-error-container, 0.7);
+  color: @md-error;
+}
+
+button.math-card {
+  border-radius: 20px;
+  border: 1px solid alpha(@md-outline, 0.38);
+  padding: 14px;
+  background: alpha(@md-surface, 0.72);
+}
+
+button.math-card:hover {
+  background: alpha(@md-primary-container, 0.5);
+  border-color: alpha(@md-primary, 0.65);
+}
+
+label.card-kicker {
+  color: @md-secondary;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+label.card-title {
+  color: @md-on-surface;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+label.card-body {
+  color: alpha(@md-on-surface, 0.84);
+  font-size: 13px;
+}
+
+label.section-title {
+  color: @md-on-surface;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+image.equation-image {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+spinner {
+  color: @md-primary;
+}
+
+progressbar.material-progress {
+  min-height: 6px;
+  border-radius: 999px;
+}
+
+progressbar.material-progress trough {
+  background-color: alpha(@md-outline, 0.24);
+  border-radius: 999px;
+}
+
+progressbar.material-progress progress {
+  background-color: @md-primary;
+  border-radius: 999px;
+}
