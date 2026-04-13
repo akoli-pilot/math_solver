@@ -36,7 +36,7 @@ class MainView(Gtk.Window):
         headline.get_style_context().add_class("headline")
 
         subtitle = Gtk.Label(
-            label="Powered by Wolfram|Alpha. Solve queries and browse returned math elements.")
+            label="Powered by Wolfram Alpha")
         subtitle.set_xalign(0)
         subtitle.set_line_wrap(True)
         subtitle.get_style_context().add_class("subtitle")
