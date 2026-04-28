@@ -123,23 +123,81 @@ class EquationEditor(Gtk.Box):
             else:
                 button.connect("clicked", self._handle_keypad_press, action, payload)
 
+    def _get_entry_state(self) -> tuple[str, int, int, int]:
+        text = self.text_entry.get_text()
+        cursor_pos = self.text_entry.get_position()
+        start = end = cursor_pos
+
+        selection = self.text_entry.get_selection_bounds()
+        if selection:
+            if len(selection) == 3:
+                has_selection, sel_start, sel_end = selection
+                if has_selection and sel_start != sel_end:
+                    start, end = sel_start, sel_end
+            elif len(selection) == 2:
+                sel_start, sel_end = selection
+                if sel_start != sel_end:
+                    start, end = sel_start, sel_end
+
+        if start > end:
+            start, end = end, start
+
+        return text, cursor_pos, start, end
+
+    def _set_entry_text(self, new_text: str, cursor_pos: int | None = None) -> None:
+        self.text_entry.set_text(new_text)
+
+        if cursor_pos is not None:
+            cursor_pos = max(0, min(cursor_pos, len(new_text)))
+            self.text_entry.set_position(cursor_pos)
+
+        self.text_entry.grab_focus()
+
     def _handle_keypad_press(self, _button: Gtk.Button, action: str, payload: str) -> None:
+        entry_text, cursor_pos, sel_start, sel_end = self._get_entry_state()
+
         if action == "append":
-            self._latex_text += payload
-        elif action == "clear":
-            self._latex_text = ""
-        elif action == "delete":
-            self._latex_text = self._latex_text[:-1]
-        elif action == "integral_request":
-            expression = self.get_latex() or "x"
-            self._latex_text = f"integral of ({expression})"
-        elif action == "derivative_request":
-            expression = self.get_latex() or "x"
-            self._latex_text = f"derivative of ({expression})"
-        elif action == "noop":
-            pass
-        self._refresh_preview()
-        self.text_entry.set_text(self._latex_text)
+            if sel_start != sel_end:
+                new_text = entry_text[:sel_start] + payload + entry_text[sel_end:]
+                new_cursor = sel_start + len(payload)
+            else:
+                new_text = entry_text[:cursor_pos] + payload + entry_text[cursor_pos:]
+                new_cursor = cursor_pos + len(payload)
+            self._set_entry_text(new_text, new_cursor)
+            return
+
+        if action == "clear":
+            self._set_entry_text("", 0)
+            return
+
+        if action == "delete":
+            if sel_start != sel_end:
+                new_text = entry_text[:sel_start] + entry_text[sel_end:]
+                new_cursor = sel_start
+            elif cursor_pos > 0:
+                new_text = entry_text[: cursor_pos - 1] + entry_text[cursor_pos:]
+                new_cursor = cursor_pos - 1
+            else:
+                return
+            self._set_entry_text(new_text, new_cursor)
+            return
+
+        if action == "integral_request":
+            selection_text = entry_text[sel_start:sel_end] if sel_start != sel_end else entry_text
+            expression = selection_text.strip() or "x"
+            new_text = f"integral of ({expression})"
+            self._set_entry_text(new_text, len(new_text))
+            return
+
+        if action == "derivative_request":
+            selection_text = entry_text[sel_start:sel_end] if sel_start != sel_end else entry_text
+            expression = selection_text.strip() or "x"
+            new_text = f"derivative of ({expression})"
+            self._set_entry_text(new_text, len(new_text))
+            return
+
+        if action == "noop":
+            return
 
     def _on_submit(self, _button: Gtk.Button) -> None:
         if self._submit_callback is not None:
