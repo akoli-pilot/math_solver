@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import threading
+from typing import TYPE_CHECKING
 
 from gi.repository import GLib
 
 from app.factories.window_factory import UIComponentFactory
-from app.models.wolfram_model import SolverResult, WolframSolverModel
+from app.models.wolfram_model import MathElement, SolverResult, WolframSolverModel
 from app.views.main_view import MainView
+
+if TYPE_CHECKING:
+    from gi.repository import Gtk
 
 
 class SolverController:
@@ -19,6 +23,7 @@ class SolverController:
         self.model = model
         self.main_view = main_view
         self.component_factory = component_factory
+        self._detail_windows: list[Gtk.Window] = []
 
     def on_solve_requested(self, *_args: object) -> None:
         query = self.main_view.get_query()
@@ -34,9 +39,20 @@ class SolverController:
             callback=self._on_main_result,
         )
 
-    def _on_math_element_selected(self, _element: object) -> None:
-        # Explanation windows were removed; cards are now display-only.
-        return
+    def _on_math_element_selected(self, element: MathElement) -> None:
+        detail_window = self.component_factory.create_math_element_window(
+            element=element,
+            parent=self.main_view,
+        )
+
+        def _cleanup(_window: object) -> None:
+            if detail_window in self._detail_windows:
+                self._detail_windows.remove(detail_window)
+
+        detail_window.connect("destroy", _cleanup)
+        self._detail_windows.append(detail_window)
+        detail_window.show_all()
+        detail_window.present()
 
     def _run_background(self, task: callable, callback: callable) -> None:
         def worker() -> None:

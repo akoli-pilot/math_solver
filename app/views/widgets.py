@@ -7,6 +7,56 @@ from app.views.graph_renderer import GraphRenderError, render_graph_pixbuf_from_
 from app.views.latex_renderer import LatexRenderError, render_latex_pixbuf
 
 
+def is_graph_like_element(element: MathElement) -> bool:
+    graph_keywords = (
+        "plot",
+        "graph",
+        "curve",
+        "function",
+        "parametric",
+        "implicit",
+        "contour",
+        "surface",
+    )
+    searchable = f"{element.pod_id} {element.pod_title} {element.title}".lower()
+    return any(keyword in searchable for keyword in graph_keywords)
+
+
+def render_latex_fallback(image_widget: Gtk.Image, content: str, font_size: int = 18) -> None:
+    try:
+        equation_pixbuf = render_latex_pixbuf(content, font_size=font_size)
+        image_widget.set_from_pixbuf(equation_pixbuf)
+    except LatexRenderError:
+        image_widget.clear()
+
+
+def apply_math_element_image(
+    image_widget: Gtk.Image,
+    element: MathElement,
+    font_size: int = 18,
+    max_width: int = 520,
+    max_height: int = 280,
+) -> None:
+    display_text = (element.display_text or element.title or "").strip()
+
+    if element.image_source and is_graph_like_element(element):
+        try:
+            graph_pixbuf = render_graph_pixbuf_from_url(
+                element.image_source,
+                max_width=max_width,
+                max_height=max_height,
+            )
+            image_widget.set_from_pixbuf(graph_pixbuf)
+            return
+        except GraphRenderError:
+            pass
+
+    if display_text:
+        render_latex_fallback(image_widget, display_text, font_size=font_size)
+    else:
+        image_widget.clear()
+
+
 class MathElementCard(Gtk.Button):
     def __init__(self, element: MathElement, on_click: callable) -> None:
         super().__init__()
@@ -16,8 +66,6 @@ class MathElementCard(Gtk.Button):
         self.set_halign(Gtk.Align.FILL)
         self.get_style_context().add_class("math-card")
         self.connect("clicked", self._handle_click, on_click)
-
-        body_text = element.display_text.strip() or element.title.strip()
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
 
@@ -32,16 +80,7 @@ class MathElementCard(Gtk.Button):
         title_label.get_style_context().add_class("card-title")
 
         equation_image = Gtk.Image()
-        should_render_graph = bool(element.image_source) and self._is_graph_like_element(element)
-
-        if should_render_graph:
-            try:
-                graph_pixbuf = render_graph_pixbuf_from_url(element.image_source)
-                equation_image.set_from_pixbuf(graph_pixbuf)
-            except GraphRenderError:
-                self._render_latex_fallback(equation_image, body_text)
-        else:
-            self._render_latex_fallback(equation_image, body_text)
+        apply_math_element_image(equation_image, element)
 
         equation_image.set_halign(Gtk.Align.START)
         equation_image.get_style_context().add_class("equation-image")
@@ -51,29 +90,6 @@ class MathElementCard(Gtk.Button):
         content_box.pack_start(equation_image, False, False, 0)
 
         self.add(content_box)
-
-    @staticmethod
-    def _is_graph_like_element(element: MathElement) -> bool:
-        graph_keywords = (
-            "plot",
-            "graph",
-            "curve",
-            "function",
-            "parametric",
-            "implicit",
-            "contour",
-            "surface",
-        )
-        searchable = f"{element.pod_id} {element.pod_title} {element.title}".lower()
-        return any(keyword in searchable for keyword in graph_keywords)
-
-    @staticmethod
-    def _render_latex_fallback(image_widget: Gtk.Image, content: str) -> None:
-        try:
-            equation_pixbuf = render_latex_pixbuf(content, font_size=18)
-            image_widget.set_from_pixbuf(equation_pixbuf)
-        except LatexRenderError:
-            image_widget.clear()
 
     def _handle_click(self, _button: Gtk.Button, on_click: callable) -> None:
         on_click(self.element)
