@@ -17,6 +17,17 @@ class EquationEditor(Gtk.Box):
         hint_label = Gtk.Label(label=placeholder)
         hint_label.set_xalign(0)
         hint_label.get_style_context().add_class("editor-hint")
+        
+        self.text_entry = Gtk.Entry()
+        self.text_entry.grab_focus()
+        self.text_entry.set_placeholder_text("Type your equation...")
+        self.text_entry.set_hexpand(True)
+
+        # when typing → update latex
+        self.text_entry.connect("changed", self._on_text_changed)
+
+        # Press Enter → submit
+        self.text_entry.connect("activate", self._on_entry_submit)
 
         self.preview_title = Gtk.Label(label="LaTeX Preview")
         self.preview_title.set_xalign(0)
@@ -48,6 +59,7 @@ class EquationEditor(Gtk.Box):
         self._build_keypad(keypad_grid)
 
         self.pack_start(hint_label, False, False, 0)
+        self.pack_start(self.text_entry, False, False, 0)
         self.pack_start(self.preview_revealer, False, False, 0)
         self.pack_start(keypad_grid, False, False, 0)
 
@@ -61,6 +73,7 @@ class EquationEditor(Gtk.Box):
 
     def set_latex(self, value: str) -> None:
         self._latex_text = (value or "").strip()
+        self.text_entry.set_text(self._latex_text)
         self._refresh_preview()
 
     def _build_keypad(self, grid: Gtk.Grid) -> None:
@@ -126,9 +139,18 @@ class EquationEditor(Gtk.Box):
         elif action == "noop":
             pass
         self._refresh_preview()
+        self.text_entry.set_text(self._latex_text)
 
     def _on_submit(self, _button: Gtk.Button) -> None:
         if self._submit_callback is not None:
+            self._submit_callback()
+    
+    def _on_text_changed(self, entry):
+        self._latex_text = entry.get_text().strip()
+        self._refresh_preview()
+
+    def _on_entry_submit(self, entry):
+        if self._submit_callback:
             self._submit_callback()
 
     def _refresh_preview(self) -> None:

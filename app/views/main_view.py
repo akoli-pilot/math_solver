@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gi.repository import GLib, Gtk
+from gi.repository import GLib, Gtk, Gdk
 
 from app.views.equation_editor import EquationEditor
 from app.views.theme import load_material_theme
@@ -101,6 +101,10 @@ class MainView(Gtk.Window):
     def connect_signals(self, controller: object) -> None:
         self.solve_button.connect("clicked", controller.on_solve_requested)
         self.query_editor.connect_submit(lambda: controller.on_solve_requested())
+        
+        # ADD KEYBOARD SUPPORT 
+        self.connect("key-press-event", lambda w, e: self._on_key_press(e, controller))
+        self.set_can_focus(True)
 
     def get_query(self) -> str:
         return self.query_editor.get_latex()
@@ -145,3 +149,16 @@ class MainView(Gtk.Window):
 
     def add_math_element_widget(self, widget: Gtk.Widget) -> None:
         self.results_flow.add(widget)
+    
+    #keyboard support feature    
+    def _on_key_press(self, event, controller):
+        from gi.repository import Gdk
+
+        key = event.keyval
+
+        # Enter → Solve
+        if key == Gdk.KEY_Return:
+            controller.on_solve_requested()
+            return True
+
+        return False
