@@ -274,3 +274,42 @@ progressbar.material-progress progress {
   background-color: @md-primary;
   border-radius: 999px;
 }
+
+popover.card-popup {
+  background-color: @md-surface-container-high;
+  border: 1px solid alpha(@md-outline, 0.38);
+  border-radius: 16px;
+  padding: 4px;
+}
+
+popover.card-popup > arrow {
+  background-color: @md-surface-container-high;
+}
+
+label.card-summary {
+  color: alpha(@md-on-surface, 0.8);
+  font-size: 14px;
+}
+
+button.tag-chip {
+  background: alpha(@md-primary-container, 0.72);
+  color: @md-primary;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+}
+
+button.tag-chip:hover {
+  background: alpha(@md-primary-container, 0.95);
+}
+
+label.term-chip {
+  background: alpha(@md-secondary, 0.18);
+  color: @md-secondary;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+}

@@ -39,20 +39,15 @@ class SolverController:
             callback=self._on_main_result,
         )
 
-    def _on_math_element_selected(self, element: MathElement) -> None:
-        detail_window = self.component_factory.create_math_element_window(
-            element=element,
-            parent=self.main_view,
-        )
-
-        def _cleanup(_window: object) -> None:
-            if detail_window in self._detail_windows:
-                self._detail_windows.remove(detail_window)
-
-        detail_window.connect("destroy", _cleanup)
-        self._detail_windows.append(detail_window)
-        detail_window.show_all()
-        detail_window.present()
+    # Pops up the card when the result element is clicked
+    def _on_math_element_selected(self, element: object, term: str = None) -> None:
+        from app.views.dictionary_card import show_dictionary_popup
+        for flow_child in self.main_view.results_flow.get_children():
+            card = flow_child.get_child()
+            if hasattr(card, "element") and card.element is element:
+                popup_term = term or card.element.pod_title
+                show_dictionary_popup(card, popup_term)
+                return
 
     def _run_background(self, task: callable, callback: callable) -> None:
         def worker() -> None:
