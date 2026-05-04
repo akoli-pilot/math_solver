@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 
 from app.views.latex_renderer import LatexRenderError, render_latex_pixbuf
 
@@ -113,6 +113,8 @@ class EquationEditor(Gtk.Box):
 
         for col_index, row_index, label, action, payload, tone, col_span in buttons:
             button = Gtk.Button(label=label)
+            button.set_can_focus(False)
+            button.set_focus_on_click(False)
             button.set_hexpand(True)
             button.get_style_context().add_class("keypad-button")
             button.get_style_context().add_class(f"keypad-{tone}")
@@ -147,11 +149,21 @@ class EquationEditor(Gtk.Box):
     def _set_entry_text(self, new_text: str, cursor_pos: int | None = None) -> None:
         self.text_entry.set_text(new_text)
 
-        if cursor_pos is not None:
-            cursor_pos = max(0, min(cursor_pos, len(new_text)))
-            self.text_entry.set_position(cursor_pos)
+        if cursor_pos is None:
+            cursor_pos = len(new_text)
 
-        self.text_entry.grab_focus()
+        cursor_pos = max(0, min(cursor_pos, len(new_text)))
+        GLib.idle_add(self._restore_entry_cursor, cursor_pos)
+
+    def _restore_entry_cursor(self, cursor_pos: int) -> bool:
+        if hasattr(self.text_entry, "grab_focus_without_selecting"):
+            self.text_entry.grab_focus_without_selecting()
+        else:
+            self.text_entry.grab_focus()
+
+        self.text_entry.set_position(cursor_pos)
+        self.text_entry.select_region(cursor_pos, cursor_pos)
+        return False
 
     def _handle_keypad_press(self, _button: Gtk.Button, action: str, payload: str) -> None:
         entry_text, cursor_pos, sel_start, sel_end = self._get_entry_state()
