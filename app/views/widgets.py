@@ -40,7 +40,7 @@ def apply_math_element_image(
 ) -> None:
     display_text = (element.display_text or element.title or "").strip()
 
-    if element.image_source and is_graph_like_element(element):
+    if element.image_source:
         try:
             graph_pixbuf = render_graph_pixbuf_from_url(
                 element.image_source,
