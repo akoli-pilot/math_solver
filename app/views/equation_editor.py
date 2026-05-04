@@ -106,6 +106,7 @@ class EquationEditor(Gtk.Box):
             (1, 4, "e", "append", "e", "special", 1),
             (2, 4, "i", "append", "i", "special", 1),
             (3, 4, "inf", "append", r"\infty", "special", 1),
+            (4, 4, "CLR", "clear", "", "action", 1),
 
             (0, 5, "x", "append", "x", "special", 1),
             (1, 5, "FRAC", "append", "/", "function", 1),
