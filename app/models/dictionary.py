@@ -100,6 +100,62 @@ DICTIONARY = [
         "summary": "A plot is a graphical representation of a function or equation on a cartesian plane.",
         "link": "https://mathworld.wolfram.com/FunctionGraph.html",
         "tags": ["Derivative", "Integral"]
+    },
+    
+    #Some Basic terms
+    {
+        "term": "Pie Chart",
+        "summary": "A pie chart is a circular chart divided into slices to show how a whole is split into parts or proportions.",
+        "link": "",
+        "tags": ["Percentage", "Decimal Form", "Equivalent Fractions", "Tape Diagram", "Number Line"]
+    },
+    {
+        "term": "Tape Diagram",
+        "summary": "A tape diagram is a visual model that uses equal-sized bars or sections to represent quantities, parts of a whole, ratios, or fractions.",
+        "link": "",
+        "tags": ["Pie Chart", "Equivalent Fractions", "Fraction", "Number Line", "Percentage"]
+    },
+    {
+        "term": "Number Line",
+        "summary": "A number line is a straight line with numbers placed in order, used to compare values and show position or distance.",
+        "link": "",
+        "tags": ["Fraction", "Decimal Form", "Percentage", "Equivalent Fractions", "Tape Diagram"]
+    },
+    {
+        "term": "Equivalent Fractions",
+        "summary": "Equivalent fractions are fractions that look different but represent the same value, such as 1/2 and 2/4.",
+        "link": "",
+        "tags": ["Fraction", "Decimal Form", "Percentage", "Number Line", "Tape Diagram"]
+    },
+    {
+        "term": "Decimal Form",
+        "summary": "Decimal form writes a number using place value and a decimal point, often as another way to represent a fraction or percentage.",
+        "link": "",
+        "tags": ["Percentage", "Fraction", "Equivalent Fractions", "Number Line"]
+    },
+    {
+        "term": "Percentage",
+        "summary": "A percentage represents an amount out of 100 and is often used to compare proportions.",
+        "link": "",
+        "tags": ["Decimal Form", "Fraction", "Equivalent Fractions", "Pie Chart", "Number Line"]
+    },
+    {
+        "term": "Exact Result",
+        "summary": "An exact result gives the precise mathematical value of an answer, such as a fraction, radical, or symbolic form, instead of a rounded decimal.",
+        "link": "",
+        "tags": ["Decimal Form", "Fraction", "Continued Fraction", "Equivalent Fractions"]
+    },
+    {
+        "term": "Continued Fraction",
+        "summary": "A continued fraction represents a number as a nested sequence of fractions, often used to describe exact values and approximations.",
+        "link": "",
+        "tags": ["Exact Result", "Fraction", "Equivalent Fractions", "Decimal Form"]
+    },
+    {
+        "term": "Fraction",
+        "summary": "A fraction represents a part of a whole using a numerator and a denominator.",
+        "link": "",
+        "tags": ["Equivalent Fractions", "Decimal Form", "Percentage", "Number Line", "Tape Diagram"]
     }
 
 ]
