@@ -68,7 +68,7 @@ class WolframSolverModel:
 
         for pod in pods:
             pod_id = str(pod.get("id", "pod"))
-            pod_title = str(pod.get("title", "Result"))
+            pod_title = str(pod.get("title", "") or "")
             subpods = pod.get("subpods", [])
 
             for index, subpod in enumerate(subpods, start=1):
@@ -76,7 +76,7 @@ class WolframSolverModel:
                     element_id=f"{pod_id}-{index}",
                     pod_id=pod_id,
                     pod_title=pod_title,
-                    title=str(subpod.get("title", "Result") or "Result"),
+                    title=str(subpod.get("title", "") or ""),
                     plaintext=str(subpod.get("plaintext", "") or ""),
                     image_source=str(subpod.get("image_source", "") or ""),
                 )
