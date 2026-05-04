@@ -109,7 +109,10 @@ class EquationEditor(Gtk.Box):
             (4, 4, "CLR", "clear", "", "action", 1),
 
             (0, 5, "x", "append", "x", "special", 1),
-            (1, 5, "FRAC", "append", "/", "function", 1),
+            (1, 5, "y", "append", "y", "special", 1),
+            (2, 5, "(", "append", "(", "special", 1),
+            (3, 5, ")", "append", ")", "special", 1),
+            (4, 5, "FRAC", "append", "/", "function", 1),
         ]
 
         for col_index, row_index, label, action, payload, tone, col_span in buttons:
