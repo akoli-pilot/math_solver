@@ -17,7 +17,7 @@ class SolverController:
     def __init__(
         self,
         model: WolframSolverModel,
-        main_view: MainView,
+        main_view: SolverWorkspace,
         component_factory: UIComponentFactory,
     ) -> None:
         self.model = model

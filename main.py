@@ -18,8 +18,8 @@ def build_app() -> MainView:
     factory = MaterialWindowFactory()
     view = MainView(title=APP_TITLE)
 
-    controller = SolverController(model=model, main_view=view, component_factory=factory)
-    view.connect_signals(controller)
+    controller = SolverController(model=model, main_view=view.workspace, component_factory=factory)
+    view.workspace.connect_signals(controller)
     return view
 
 
