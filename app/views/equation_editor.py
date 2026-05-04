@@ -128,24 +128,24 @@ class EquationEditor(Gtk.Box):
 
     def _get_entry_state(self) -> tuple[str, int, int, int]:
         text = self.text_entry.get_text()
-        cursor_pos = self.text_entry.get_position()
-        start = end = cursor_pos
 
         selection = self.text_entry.get_selection_bounds()
         if selection:
             if len(selection) == 3:
                 has_selection, sel_start, sel_end = selection
                 if has_selection and sel_start != sel_end:
-                    start, end = sel_start, sel_end
+                    if sel_start > sel_end:
+                        sel_start, sel_end = sel_end, sel_start
+                    return text, sel_end, sel_start, sel_end
             elif len(selection) == 2:
                 sel_start, sel_end = selection
                 if sel_start != sel_end:
-                    start, end = sel_start, sel_end
+                    if sel_start > sel_end:
+                        sel_start, sel_end = sel_end, sel_start
+                    return text, sel_end, sel_start, sel_end
 
-        if start > end:
-            start, end = end, start
-
-        return text, cursor_pos, start, end
+        cursor_pos = len(text)
+        return text, cursor_pos, cursor_pos, cursor_pos
 
     def _set_entry_text(self, new_text: str, cursor_pos: int | None = None) -> None:
         self.text_entry.set_text(new_text)
@@ -163,7 +163,6 @@ class EquationEditor(Gtk.Box):
             self.text_entry.grab_focus()
 
         self.text_entry.set_position(cursor_pos)
-        self.text_entry.select_region(cursor_pos, cursor_pos)
         return False
 
     def _handle_keypad_press(self, _button: Gtk.Button, action: str, payload: str) -> None:
