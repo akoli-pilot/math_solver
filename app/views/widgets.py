@@ -86,13 +86,13 @@ class MathElementCard(Gtk.Button):
         kicker_label.set_xalign(0)
         kicker_label.get_style_context().add_class("card-kicker")
 
-        title_label = Gtk.Label(label=element.title or "Math Result")
+        title_label = Gtk.Label(label=element.title or "")
         title_label.set_xalign(0)
         title_label.set_line_wrap(True)
         title_label.set_max_width_chars(55)
         title_label.get_style_context().add_class("card-title")
 
-        if element.title == "Result":
+        if not element.title.strip() or element.title in {"Result", "Math Result"}:
             title_label.set_no_show_all(True)
             title_label.hide()
 
