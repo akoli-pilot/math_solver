@@ -98,6 +98,10 @@ class SolverWorkspace(Gtk.Box):
     def connect_signals(self, controller: object) -> None:
         self.solve_button.connect("clicked", controller.on_solve_requested)
         self.query_editor.connect_submit(lambda: controller.on_solve_requested())
+        self.query_editor.connect_history_navigation(
+            controller.on_history_previous,
+            controller.on_history_next,
+        )
 
         self.connect("key-press-event", lambda w, e: self._on_key_press(e, controller))
         self.set_can_focus(True)

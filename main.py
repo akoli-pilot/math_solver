@@ -10,7 +10,7 @@ from app.factories.window_factory import MaterialWindowFactory
 from app.models.wolfram_model import WolframSolverModel
 from app.services.wolfram_client import WolframClient
 from app.views.main_view import MainView
-
+from app.views.solver_workspace import SolverWorkspace
 
 def build_app() -> MainView:
     client = WolframClient(app_id=WOLFRAM_APP_ID)
@@ -18,8 +18,25 @@ def build_app() -> MainView:
     factory = MaterialWindowFactory()
     view = MainView(title=APP_TITLE)
 
-    controller = SolverController(model=model, main_view=view.workspace, component_factory=factory)
-    view.workspace.connect_signals(controller)
+    view.controllers: list[SolverController] = []
+
+    def attach_controller(workspace: SolverWorkspace) -> None:
+        controller = SolverController(
+            model=model,
+            main_view=workspace,
+            component_factory=factory,
+        )
+        workspace.connect_signals(controller)
+        view.controllers.append(controller)
+
+    attach_controller(view.workspace)
+
+    def create_new_tab() -> None:
+        new_workspace = view.add_solver_tab()
+        attach_controller(new_workspace)
+        view.show_all()
+
+    view.set_new_tab_handler(create_new_tab)
     return view
 
 

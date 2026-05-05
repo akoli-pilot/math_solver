@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 
 from app.views.latex_renderer import LatexRenderError, render_latex_pixbuf
 
@@ -13,6 +13,8 @@ class EquationEditor(Gtk.Box):
 
         self._submit_callback: callable | None = None
         self._latex_text = ""
+        self._history_prev_callback: callable | None = None
+        self._history_next_callback: callable | None = None
 
         hint_label = Gtk.Label(label=placeholder)
         hint_label.set_xalign(0)
@@ -28,6 +30,7 @@ class EquationEditor(Gtk.Box):
 
         # Press Enter → submit
         self.text_entry.connect("activate", self._on_entry_submit)
+        self.text_entry.connect("key-press-event", self._on_entry_key_press)
 
         self.preview_title = Gtk.Label(label="LaTeX Preview")
         self.preview_title.set_xalign(0)
@@ -67,6 +70,10 @@ class EquationEditor(Gtk.Box):
 
     def connect_submit(self, callback: callable) -> None:
         self._submit_callback = callback
+
+    def connect_history_navigation(self, previous_callback: callable, next_callback: callable) -> None:
+        self._history_prev_callback = previous_callback
+        self._history_next_callback = next_callback
 
     def get_latex(self) -> str:
         return self._latex_text.strip()
@@ -225,6 +232,19 @@ class EquationEditor(Gtk.Box):
     def _on_entry_submit(self, entry):
         if self._submit_callback:
             self._submit_callback()
+
+    def _on_entry_key_press(self, _entry, event):
+        if event.keyval == Gdk.KEY_Up:
+            if self._history_prev_callback is not None:
+                self._history_prev_callback()
+                return True
+
+        if event.keyval == Gdk.KEY_Down:
+            if self._history_next_callback is not None:
+                self._history_next_callback()
+                return True
+
+        return False
 
     def _refresh_preview(self) -> None:
         latex_text = self.get_latex()
