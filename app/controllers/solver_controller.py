@@ -17,13 +17,16 @@ class SolverController:
     def __init__(
         self,
         model: WolframSolverModel,
-        main_view: MainView,
+        main_view: SolverWorkspace,
         component_factory: UIComponentFactory,
     ) -> None:
         self.model = model
         self.main_view = main_view
         self.component_factory = component_factory
         self._detail_windows: list[Gtk.Window] = []
+
+        self._history: list[str] = []
+        self._history_index: int | None = None
 
     def on_solve_requested(self, *_args: object) -> None:
         query = self.main_view.get_query()
@@ -39,20 +42,57 @@ class SolverController:
             callback=self._on_main_result,
         )
 
-    def _on_math_element_selected(self, element: MathElement) -> None:
-        detail_window = self.component_factory.create_math_element_window(
-            element=element,
-            parent=self.main_view,
+    def _remember_query(self, query: str) -> None:
+        normalized = (query or "").strip()
+        if not normalized:
+            return
+
+        if not self._history or self._history[-1] != normalized:
+            self._history.append(normalized)
+
+        self._history_index = None
+
+    def on_history_previous(self) -> None:
+        if not self._history:
+            return
+
+        if self._history_index is None:
+            self._history_index = len(self._history) - 1
+        elif self._history_index > 0:
+            self._history_index -= 1
+
+        self.main_view.query_editor.set_latex(self._history[self._history_index])
+        self.main_view.set_status(
+            f"History {self._history_index + 1}/{len(self._history)}",
+            tone="info",
         )
 
-        def _cleanup(_window: object) -> None:
-            if detail_window in self._detail_windows:
-                self._detail_windows.remove(detail_window)
+    def on_history_next(self) -> None:
+        if not self._history or self._history_index is None:
+            return
 
-        detail_window.connect("destroy", _cleanup)
-        self._detail_windows.append(detail_window)
-        detail_window.show_all()
-        detail_window.present()
+        if self._history_index < len(self._history) - 1:
+            self._history_index += 1
+            self.main_view.query_editor.set_latex(self._history[self._history_index])
+            self.main_view.set_status(
+                f"History {self._history_index + 1}/{len(self._history)}",
+                tone="info",
+            )
+        else:
+            self._history_index = None
+            self.main_view.query_editor.set_latex("")
+            self.main_view.set_status("Ready", tone="info")
+
+    # Pops up the card when the result element is clicked
+    def _on_math_element_selected(self, element: object, term: str = None) -> None:
+        from app.views.dictionary_card import show_dictionary_popup
+        
+        for flow_child in self.main_view.results_flow.get_children():
+            card = flow_child.get_child()
+            if hasattr(card, "element") and card.element is element:
+                popup_term = term or card.element.pod_title
+                show_dictionary_popup(card, popup_term)
+                return
 
     def _run_background(self, task: callable, callback: callable) -> None:
         def worker() -> None:
@@ -65,6 +105,8 @@ class SolverController:
         self.main_view.set_loading(False)
 
         if result.elements:
+            self._remember_query(result.query)
+            
             for element in result.elements:
                 card = self.component_factory.create_math_element_widget(
                     element=element,

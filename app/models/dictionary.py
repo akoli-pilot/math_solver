@@ -1,0 +1,161 @@
+# Bunch of Calculus terms for the card popup
+
+DICTIONARY = [
+
+    # Main Terms
+    {
+        "term": "Derivative",
+        "summary": "The derivative measures the instantaneous rate of change of a function with respect to a variable.",
+        "link": "https://mathworld.wolfram.com/Derivative.html",
+        "tags": ["Integral","Limit", "Chain Rule", "Product Rule", "Quotient Rule", "Global Minima", "Global Maxima", "Series Expansion", "Plot", "Differential"]
+    },
+    {
+        "term": "Integral",
+        "summary": "An integral computes the area under a curve between two points. It is often called an antiderivative.",
+        "link": "https://mathworld.wolfram.com/Integral.html",
+        "tags": ["Derivative", "Limit", "Indefinite Integral", "Definite Integral", "Series Expansion", "Plot"]
+    },
+    {
+        "term": "Limit",
+        "summary": "A limit describes the value a function approaches as its input approaches a given point.",
+        "link": "https://mathworld.wolfram.com/Limit.html",
+        "tags": ["Derivative", "Integral", "Continuity", "L'Hopital's Rule"]
+    },
+
+    # Derivative children
+    {
+        "term": "Chain Rule",
+        "summary": "The chain rule is a formula for computing the derivative of a composite function such that if y = f(g(x)), then dy/dx = f'(g(x)) · g'(x).",
+        "link": "https://mathworld.wolfram.com/ChainRule.html",
+        "tags": ["Derivative", "Product Rule", "Quotient Rule"]
+    },
+    {
+        "term": "Product Rule",
+        "summary": "The product rule states that the derivative of two multiplied functions f(x)g(x) is given by f'(x)g(x) + f(x)g'(x).",
+        "link": "https://mathworld.wolfram.com/ProductRule.html",
+        "tags": ["Derivative", "Quotient Rule", "Chain Rule"]
+    },
+    {
+        "term": "Quotient Rule",
+        "summary": "The quotient rule states that the derivative of a quotient of two functions f(x)/g(x) is given by (f'(x)g(x) - f(x)g'(x)) / (g(x))^2.",
+        "link": "https://mathworld.wolfram.com/QuotientRule.html",
+        "tags": ["Derivative", "Product Rule", "Chain Rule"]
+    },
+    {
+        "term": "Global Minima",
+        "summary": "A global minimum is the lowest value a function attains over its entire domain.",
+        "link": "https://mathworld.wolfram.com/GlobalMinimum.html",
+        "tags": ["Derivative", "Global Maxima"]
+    },
+    {
+        "term": "Global Maxima",
+        "summary": "A global maximum is the highest value a function attains over its entire domain.",
+        "link": "https://mathworld.wolfram.com/GlobalMaximum.html",
+        "tags": ["Derivative", "Global Minima"]
+    },
+    {
+    "term": "Differential",
+    "summary": "A differential represents an infinitely small change in a variable.",
+    "link": "https://mathworld.wolfram.com/Differential.html",
+    "tags": ["Derivative", "Integral", "Indefinite Integral"]
+    },
+
+    # Integral children
+    {
+        "term": "Indefinite Integral",
+        "summary": "An indefinite integral represents the family of all antiderivatives of a function. It is the reverse operation of differentiation.",
+        "link": "https://mathworld.wolfram.com/IndefiniteIntegral.html",
+        "tags": ["Integral", "Definite Integral"]
+    },
+    {
+        "term": "Definite Integral",
+        "summary": "A definite integral computes the net  area under a curve between two bounds a and b. It yields a specific numeric value as opposed to a family of functions.",
+        "link": "https://mathworld.wolfram.com/DefiniteIntegral.html",
+        "tags": ["Integral", "Indefinite Integral"]
+    },
+
+    # Limit children
+    {
+        "term": "L'Hopital's Rule",
+        "summary": "L'Hopital's rule resolves indeterminate forms like 0/0 or infinity/infinity by differentiating the numerator and denominator separately and retaking the limit.",
+        "link": "https://mathworld.wolfram.com/LHospitalsRule.html",
+        "tags": ["Limit", "Derivative"]
+    },
+    {
+        "term": "Continuity",
+        "summary": "A function is continuous at a point if its limit exists there and equals the function's value. Visually this is a function with no breaks or jumps.",
+        "link": "https://mathworld.wolfram.com/Continuous.html",
+        "tags": ["Limit", "Derivative"]
+    },
+
+    # Other
+    {
+        "term": "Series Expansion",
+        "summary": "A series expansion expresses a function as an infinite sum of simpler terms These are used to approximate functions near a specific point.",
+        "link": "https://mathworld.wolfram.com/SeriesExpansion.html",
+        "tags": ["Derivative", "Integral", "Limit"]
+    },
+    {
+        "term": "Plot",
+        "summary": "A plot is a graphical representation of a function or equation on a cartesian plane.",
+        "link": "https://mathworld.wolfram.com/FunctionGraph.html",
+        "tags": ["Derivative", "Integral"]
+    },
+    
+    #Some Basic terms
+    {
+        "term": "Pie Chart",
+        "summary": "A pie chart is a circular chart divided into slices to show how a whole is split into parts or proportions.",
+        "link": "",
+        "tags": ["Percentage", "Decimal Form", "Equivalent Fractions", "Tape Diagram", "Number Line"]
+    },
+    {
+        "term": "Tape Diagram",
+        "summary": "A tape diagram is a visual model that uses equal-sized bars or sections to represent quantities, parts of a whole, ratios, or fractions.",
+        "link": "",
+        "tags": ["Pie Chart", "Equivalent Fractions", "Fraction", "Number Line", "Percentage"]
+    },
+    {
+        "term": "Number Line",
+        "summary": "A number line is a straight line with numbers placed in order, used to compare values and show position or distance.",
+        "link": "",
+        "tags": ["Fraction", "Decimal Form", "Percentage", "Equivalent Fractions", "Tape Diagram"]
+    },
+    {
+        "term": "Equivalent Fractions",
+        "summary": "Equivalent fractions are fractions that look different but represent the same value, such as 1/2 and 2/4.",
+        "link": "",
+        "tags": ["Fraction", "Decimal Form", "Percentage", "Number Line", "Tape Diagram"]
+    },
+    {
+        "term": "Decimal Form",
+        "summary": "Decimal form writes a number using place value and a decimal point, often as another way to represent a fraction or percentage.",
+        "link": "",
+        "tags": ["Percentage", "Fraction", "Equivalent Fractions", "Number Line"]
+    },
+    {
+        "term": "Percentage",
+        "summary": "A percentage represents an amount out of 100 and is often used to compare proportions.",
+        "link": "",
+        "tags": ["Decimal Form", "Fraction", "Equivalent Fractions", "Pie Chart", "Number Line"]
+    },
+    {
+        "term": "Exact Result",
+        "summary": "An exact result gives the precise mathematical value of an answer, such as a fraction, radical, or symbolic form, instead of a rounded decimal.",
+        "link": "",
+        "tags": ["Decimal Form", "Fraction", "Continued Fraction", "Equivalent Fractions"]
+    },
+    {
+        "term": "Continued Fraction",
+        "summary": "A continued fraction represents a number as a nested sequence of fractions, often used to describe exact values and approximations.",
+        "link": "",
+        "tags": ["Exact Result", "Fraction", "Equivalent Fractions", "Decimal Form"]
+    },
+    {
+        "term": "Fraction",
+        "summary": "A fraction represents a part of a whole using a numerator and a denominator.",
+        "link": "",
+        "tags": ["Equivalent Fractions", "Decimal Form", "Percentage", "Number Line", "Tape Diagram"]
+    }
+
+]

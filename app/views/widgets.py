@@ -5,6 +5,7 @@ from gi.repository import Gtk
 from app.models.wolfram_model import MathElement
 from app.views.graph_renderer import GraphRenderError, render_graph_pixbuf_from_url
 from app.views.latex_renderer import LatexRenderError, render_latex_pixbuf
+from app.models.dictionary import DICTIONARY
 
 
 def is_graph_like_element(element: MathElement) -> bool:
@@ -39,7 +40,7 @@ def apply_math_element_image(
 ) -> None:
     display_text = (element.display_text or element.title or "").strip()
 
-    if element.image_source and is_graph_like_element(element):
+    if element.image_source:
         try:
             graph_pixbuf = render_graph_pixbuf_from_url(
                 element.image_source,
@@ -56,6 +57,15 @@ def apply_math_element_image(
     else:
         image_widget.clear()
 
+# Scans the text for matching terms from the dictionary
+def _detect_terms(text: str) -> list[str]:
+    text_lower = text.lower()
+    matched = []
+    for entry in DICTIONARY:
+        term = entry["term"]
+        if term.lower() in text_lower:
+            matched.append(term)
+    return matched
 
 class MathElementCard(Gtk.Button):
     def __init__(self, element: MathElement, on_click: callable) -> None:
@@ -66,6 +76,9 @@ class MathElementCard(Gtk.Button):
         self.set_halign(Gtk.Align.FILL)
         self.get_style_context().add_class("math-card")
         self.connect("clicked", self._handle_click, on_click)
+        body_text = element.display_text.strip() or element.title.strip()
+        self._matched_terms = _detect_terms(element.pod_title + " " + body_text)
+        self._popup_term = self._matched_terms[0] if self._matched_terms else element.pod_title
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
 
@@ -73,11 +86,15 @@ class MathElementCard(Gtk.Button):
         kicker_label.set_xalign(0)
         kicker_label.get_style_context().add_class("card-kicker")
 
-        title_label = Gtk.Label(label=element.title or "Math Result")
+        title_label = Gtk.Label(label=element.title or "")
         title_label.set_xalign(0)
         title_label.set_line_wrap(True)
         title_label.set_max_width_chars(55)
         title_label.get_style_context().add_class("card-title")
+
+        if not element.title.strip() or element.title in {"Result", "Math Result"}:
+            title_label.set_no_show_all(True)
+            title_label.hide()
 
         equation_image = Gtk.Image()
         apply_math_element_image(equation_image, element)
@@ -91,5 +108,19 @@ class MathElementCard(Gtk.Button):
 
         self.add(content_box)
 
+        if self._matched_terms:
+            chips_box = Gtk.FlowBox()
+            chips_box.set_selection_mode(Gtk.SelectionMode.NONE)
+            chips_box.set_max_children_per_line(6)
+            chips_box.set_column_spacing(6)
+            chips_box.set_row_spacing(4)
+            chips_box.set_margin_top(6)
+            for term in self._matched_terms:
+                chip = Gtk.Button(label=term)
+                chip.get_style_context().add_class("tag-chip")
+                chip.get_style_context().add_class("term-chip")
+                chips_box.add(chip)
+            content_box.pack_start(chips_box, False, False, 0)
+
     def _handle_click(self, _button: Gtk.Button, on_click: callable) -> None:
-        on_click(self.element)
+        on_click(self.element, self._popup_term)

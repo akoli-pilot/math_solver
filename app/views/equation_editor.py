@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib, Gdk
 
 from app.views.latex_renderer import LatexRenderError, render_latex_pixbuf
 
@@ -13,6 +13,8 @@ class EquationEditor(Gtk.Box):
 
         self._submit_callback: callable | None = None
         self._latex_text = ""
+        self._history_prev_callback: callable | None = None
+        self._history_next_callback: callable | None = None
 
         hint_label = Gtk.Label(label=placeholder)
         hint_label.set_xalign(0)
@@ -28,6 +30,7 @@ class EquationEditor(Gtk.Box):
 
         # Press Enter → submit
         self.text_entry.connect("activate", self._on_entry_submit)
+        self.text_entry.connect("key-press-event", self._on_entry_key_press)
 
         self.preview_title = Gtk.Label(label="LaTeX Preview")
         self.preview_title.set_xalign(0)
@@ -68,6 +71,10 @@ class EquationEditor(Gtk.Box):
     def connect_submit(self, callback: callable) -> None:
         self._submit_callback = callback
 
+    def connect_history_navigation(self, previous_callback: callable, next_callback: callable) -> None:
+        self._history_prev_callback = previous_callback
+        self._history_next_callback = next_callback
+
     def get_latex(self) -> str:
         return self._latex_text.strip()
 
@@ -106,13 +113,19 @@ class EquationEditor(Gtk.Box):
             (1, 4, "e", "append", "e", "special", 1),
             (2, 4, "i", "append", "i", "special", 1),
             (3, 4, "inf", "append", r"\infty", "special", 1),
+            (4, 4, "CLR", "clear", "", "action", 1),
 
             (0, 5, "x", "append", "x", "special", 1),
-            (1, 5, "FRAC", "append", "/", "function", 1),
+            (1, 5, "y", "append", "y", "special", 1),
+            (2, 5, "(", "append", "(", "special", 1),
+            (3, 5, ")", "append", ")", "special", 1),
+            (4, 5, "FRAC", "append", "/", "function", 1),
         ]
 
         for col_index, row_index, label, action, payload, tone, col_span in buttons:
             button = Gtk.Button(label=label)
+            button.set_can_focus(False)
+            button.set_focus_on_click(False)
             button.set_hexpand(True)
             button.get_style_context().add_class("keypad-button")
             button.get_style_context().add_class(f"keypad-{tone}")
@@ -125,33 +138,42 @@ class EquationEditor(Gtk.Box):
 
     def _get_entry_state(self) -> tuple[str, int, int, int]:
         text = self.text_entry.get_text()
-        cursor_pos = self.text_entry.get_position()
-        start = end = cursor_pos
 
         selection = self.text_entry.get_selection_bounds()
         if selection:
             if len(selection) == 3:
                 has_selection, sel_start, sel_end = selection
                 if has_selection and sel_start != sel_end:
-                    start, end = sel_start, sel_end
+                    if sel_start > sel_end:
+                        sel_start, sel_end = sel_end, sel_start
+                    return text, sel_end, sel_start, sel_end
             elif len(selection) == 2:
                 sel_start, sel_end = selection
                 if sel_start != sel_end:
-                    start, end = sel_start, sel_end
+                    if sel_start > sel_end:
+                        sel_start, sel_end = sel_end, sel_start
+                    return text, sel_end, sel_start, sel_end
 
-        if start > end:
-            start, end = end, start
-
-        return text, cursor_pos, start, end
+        cursor_pos = len(text)
+        return text, cursor_pos, cursor_pos, cursor_pos
 
     def _set_entry_text(self, new_text: str, cursor_pos: int | None = None) -> None:
         self.text_entry.set_text(new_text)
 
-        if cursor_pos is not None:
-            cursor_pos = max(0, min(cursor_pos, len(new_text)))
-            self.text_entry.set_position(cursor_pos)
+        if cursor_pos is None:
+            cursor_pos = len(new_text)
 
-        self.text_entry.grab_focus()
+        cursor_pos = max(0, min(cursor_pos, len(new_text)))
+        GLib.idle_add(self._restore_entry_cursor, cursor_pos)
+
+    def _restore_entry_cursor(self, cursor_pos: int) -> bool:
+        if hasattr(self.text_entry, "grab_focus_without_selecting"):
+            self.text_entry.grab_focus_without_selecting()
+        else:
+            self.text_entry.grab_focus()
+
+        self.text_entry.set_position(cursor_pos)
+        return False
 
     def _handle_keypad_press(self, _button: Gtk.Button, action: str, payload: str) -> None:
         entry_text, cursor_pos, sel_start, sel_end = self._get_entry_state()
@@ -210,6 +232,19 @@ class EquationEditor(Gtk.Box):
     def _on_entry_submit(self, entry):
         if self._submit_callback:
             self._submit_callback()
+
+    def _on_entry_key_press(self, _entry, event):
+        if event.keyval == Gdk.KEY_Up:
+            if self._history_prev_callback is not None:
+                self._history_prev_callback()
+                return True
+
+        if event.keyval == Gdk.KEY_Down:
+            if self._history_next_callback is not None:
+                self._history_next_callback()
+                return True
+
+        return False
 
     def _refresh_preview(self) -> None:
         latex_text = self.get_latex()
